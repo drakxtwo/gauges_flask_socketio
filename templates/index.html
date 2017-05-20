@@ -1,0 +1,270 @@
+<!doctype html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>LEE Gauge Test</title>
+    <script src="static/gauge.min.js"></script>
+    <script type="text/javascript" src="static/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="static/socket.io-1.3.5.min.js"></script>
+    <script type="text/javascript" charset="utf-8">
+      var mycount = 66;
+      var myData = {};
+      var testc = 10;
+      $(document).ready(function() {
+      namespace = '/carpi';
+          var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace);    
+          socket.on('connect', function() {
+               socket.emit('my_event', {data: 'I\'m connected!'});
+          });
+          socket.on('my_response', function(msg) {
+              $('#values').html(msg.count)
+      $('#log').append('<br>' + $('<div/>').text('Received #' + msg.data + ': ' + msg.count).html())
+      var elec = msg.elec
+      var external = msg.ext
+      var frontroom = msg.fr
+      var kitchen = msg.kt
+      var bedroom = msg.bd
+
+      extGauge.value = external
+      frontroomGauge.value = frontroom
+      kitchenGauge.value = kitchen
+      bedroomGauge.value = bedroom
+      elecGauge.value = elec
+            });
+       });
+    </script>
+
+</head>
+<body style="background: #666">
+
+  <p>Async mode is: <b>{{ async_mode }}</b></p>
+<b>Values:</b>
+<div id="values"></div>
+<br>test<br>
+
+<script>
+  document.write(testc);
+</script>
+
+</p>
+    <!-- external temp -->
+    <canvas id="external-temp">  </canvas>
+    <script>
+      var extGauge = new RadialGauge({
+      renderTo: 'external-temp',
+      width: 150,
+      height: 150,
+      units: "Deg",
+      minValue: -10,
+      maxValue: 30,
+      majorTicks: [
+          "-10",
+          "5",
+          "0",
+          "5",
+          "10",
+          "15",
+          "20",
+          "25",
+          "30"
+      ],
+      minorTicks: 5,
+      strokeTicks: true,
+      highlights: [
+      { from: -10, to: 0, color: 'rgba(25,0, 168, .8)'},
+      { from: 0, to: 5, color: 'rgba(47, 15, 224, .7)'},
+      { from: 5, to: 15, color: 'rgba(47, 15, 247, .6)'},
+      { from: 15, to: 18, color: 'rgba(0, 204, 61, .8)'},
+      { from: 18, to: 22, color: 'rgba(0, 204, 61, .8)'},
+      { from: 22, to: 26, color: 'rgba(247, 151, 7, .5)'},
+      { from: 26, to: 30, color: 'rgba(247, 31, 7, .5)'}
+      ],
+    colorPlate: "#fff",
+    borderShadowWidth: 0,
+    borders: false,
+    needleType: "arrow",
+    needleWidth: 3,
+    needleCircleSize: 10,
+    needleCircleOuter: true,
+    needleCircleInner: false,
+    animationDuration: 1500,
+    animationRule: "linear"
+    })
+      extGauge.draw();
+    </script>
+
+    <!-- frontroom -->
+    <canvas id="frontroom-temp">  </canvas>
+    <script>
+      var frontroomGauge = new RadialGauge({
+      renderTo: 'frontroom-temp',
+      width: 100,
+      height: 100,
+      units: "Deg",
+      minValue: 10,
+      maxValue: 30,
+      majorTicks: [
+          "10",
+          "15",
+          "20",
+          "25",
+          "30"
+      ],
+      minorTicks: 5,
+      strokeTicks: true,
+      highlights: [
+      { from: 10, to: 15, color: 'rgba(25,0, 168, .8)'},
+      { from: 15, to: 18, color: 'rgba(47, 15, 224, .7)'},
+      { from: 18, to: 22, color: 'rgba(47, 15, 247, .6)'},
+      { from: 22, to: 25, color: 'rgba(0, 204, 61, .8)'},
+      { from: 25, to: 30, color: 'rgba(0, 204, 61, .8)'}
+      ],
+    colorPlate: "#fff",
+    borderShadowWidth: 0,
+    borders: false,
+    needleType: "arrow",
+    needleWidth: 3,
+    needleCircleSize: 10,
+    needleCircleOuter: true,
+    needleCircleInner: false,
+    animationDuration: 1500,
+    animationRule: "linear"
+    })
+      frontroomGauge.draw();
+    </script>
+
+    <!-- kitchen -->
+    <canvas id="kitchen-temp">  </canvas>
+    <script>
+      var kitchenGauge = new RadialGauge({
+      renderTo: 'kitchen-temp',
+      width: 100,
+      height: 100,
+      units: "Deg",
+      minValue: 10,
+      maxValue: 30,
+      majorTicks: [
+          "10",
+          "15",
+          "20",
+          "25",
+          "30"
+      ],
+      minorTicks: 5,
+      strokeTicks: true,
+      highlights: [
+      { from: 10, to: 15, color: 'rgba(25,0, 168, .8)'},
+      { from: 15, to: 18, color: 'rgba(47, 15, 224, .7)'},
+      { from: 18, to: 22, color: 'rgba(47, 15, 247, .6)'},
+      { from: 22, to: 25, color: 'rgba(0, 204, 61, .8)'},
+      { from: 25, to: 30, color: 'rgba(0, 204, 61, .8)'}
+      ],
+    colorPlate: "#fff",
+    borderShadowWidth: 0,
+    borders: false,
+    needleType: "arrow",
+    needleWidth: 3,
+    needleCircleSize: 10,
+    needleCircleOuter: true,
+    needleCircleInner: false,
+    animationDuration: 1500,
+    animationRule: "linear"
+    })
+      kitchenGauge.draw();
+    </script>
+
+
+    <!-- frontroom -->
+    <canvas id="bedroom-temp">  </canvas>
+    <script>
+      var bedroomGauge = new RadialGauge({
+      renderTo: 'bedroom-temp',
+      width: 100,
+      height: 100,
+      units: "Deg",
+      minValue: 10,
+      maxValue: 30,
+      majorTicks: [
+          "10",
+          "15",
+          "20",
+          "25",
+          "30"
+      ],
+      minorTicks: 5,
+      strokeTicks: true,
+      highlights: [
+      { from: 10, to: 15, color: 'rgba(25,0, 168, .8)'},
+      { from: 15, to: 18, color: 'rgba(47, 15, 224, .7)'},
+      { from: 18, to: 22, color: 'rgba(47, 15, 247, .6)'},
+      { from: 22, to: 25, color: 'rgba(0, 204, 61, .8)'},
+      { from: 25, to: 30, color: 'rgba(0, 204, 61, .8)'}
+      ],
+    colorPlate: "#fff",
+    borderShadowWidth: 0,
+    borders: false,
+    needleType: "arrow",
+    needleWidth: 3,
+    needleCircleSize: 10,
+    needleCircleOuter: true,
+    needleCircleInner: false,
+    animationDuration: 1500,
+    animationRule: "linear"
+    })
+      bedroomGauge.draw();
+    </script>
+
+    
+    <!-- electricity meter -->
+
+    <br>
+    <canvas id='electricity'></canvas>
+    <script>
+      var elecGauge = new LinearGauge({
+      renderTo: 'electricity',
+      width: 600,
+      height: 80,
+      minValue: 0,
+      maxValue: 8000,
+      majorTicks: [
+          "0",
+          "1000",
+          "2000",
+          "3000",
+          "4000",
+          "5000",
+          "6000",
+          "7000",
+          "8000",
+      ],
+    minorTicks: 10,
+    strokeTicks: true,
+    colorPlate: "#fff",
+    borderShadowWidth: 0,
+    borders: false,
+    barBeginCircle: false,
+    tickSide: "left",
+    numberSide: "left",
+    needleSide: "left",
+    needleType: "line",
+    needleWidth: 3,
+      colorNeedle: "#222",
+      barWidth: "8",
+      colorBar: "#ffffff",
+      colorBarStroke: "#03bc2e",
+      colorBarProgress: "#fc0a02",
+      animationDuration: 1500,
+      animationRule: "linear",
+      animationTarget: "plate",      
+      highlights: [
+      { from: 0, to: 500, color: 'rgba(107,194, 19, .5)'},
+      { from: 500, to: 1500, color: 'rgba(247, 239, 7, .5)'},
+      { from: 1500, to: 4000, color: 'rgba(247, 151, 7, .5)'},
+      { from: 4000, to: 8000, color: 'rgba(247, 31, 7, .5)'}
+      ],
+    })
+      elecGauge.draw();
+    </script>
+
+</body>
+</html>
