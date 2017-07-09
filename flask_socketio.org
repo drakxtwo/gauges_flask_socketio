@@ -3,54 +3,51 @@
 #+AUTHOR: Lee Halls
 #+EMAIL: admin@drakxtwo.eu
 #+DESCRIPTION: Notes on getting canvas gauges working with socketio
-#+KEYWORDS:  flask socketio canvas gauge html5
+#+KEYWORDS:  flask socketio canvas gauges html5
 #+TAGS: project
 #+STARTUP: inlineimages
 #+SETUPFILE: theme-readtheorg-local.setup
+#+DATE: 2017-04-03T21:17:39+01:00
 
 * Intro
 
-I've been running a home Pi based server that monitors electricity & temperatures both internal and external, for a longtime it was dumb ie i could view the data when i ssh'd into the pi or on graphs via a remote service but apart from email alerts it was to all intents lacking.
-
-[[file:imgs_socketio/2017-05-20%2010_41_04-192.168.1.64%20radioPi%20(RadioPi)%20-%20VNC%20Viewer.png]]
+I've been running a home Pi based server that monitors electricity & internal/external temperatures, for a longtime it was dumb ie i could view the data when i would ssh in or on graphs via a remote service but apart from email alerts for long term high electricity usage it was to all intents lacking.
 
 Then i found [[https://canvas-gauges.com/][Canvas Gauges]] by Mikhus ... perfect you could have radial or linear gauges with lots of customisation and /*reactive*/.
 
+[[file:imgs_socketio/2017-05-20%2010_41_04-192.168.1.64%20radioPi%20(RadioPi)%20-%20VNC%20Viewer.png]]
+
 Or so i thought, i could not get it working, 4wks of trying and i was going to give up, i had gauges - they worked but did not change value automatically so i ended up setting an HTML refresh to update every so often just to give me a dashboard which looked useful but i wasnt happy.
 
-Getting a gauge onto a page is simple, getting the gauge to be reactive well at the time that was beyond me, i searched for simple tutorials and all i found was chat apps ... not what i wanted. Python ok, i'm not brilliant but i get there, websockets whoa and moving into javascript was daunting to say the least. Eventually, whilst sat waiting for a flight i finally got the gauges reacting, updating in realtime. 
+Getting a gauge onto a page is simple, getting the gauge to be reactive well at the time that was beyond me, i searched for simple tutorials and all i found was chat apps ... not what i wanted. With Python i usually figure out what i need to get there, websockets whoa and moving into javascript albeit simplistically was daunting and way more than i wanted for a few gauges. Eventually, whilst sat waiting in yet another airport for yet another flight i finally got the gauges reacting and updating in realtime. 
 
-Hopefully someone just starting with the Pi or any other flask based website will find this useful if they want to show a value on a reactive gauge.
+Hopefully someone just starting with the Pi or any other flask based website will find this useful.
 
-Following this and downloading the https://github.com/drakxtwo/gauges_flask_socketio repository will (/should/)get you a page with gauges that react like so;
+Following this guide and downloading the https://github.com/drakxtwo/gauges_flask_socketio repository will (/should/)get you a page with gauges that react like so;
 
 [[file:imgs_socketio/gauges_anim.mp4]]
 
-Now there is one *caveat* ... i bodged this together from lots of sources, in parts to be blunt i dont know what i'm doing here :) it works that is true, however i dont know what performance hit will have on your or my network. Have never tried this before and i can see the constant network chatter, it might have an adverse affect on network speed.
+I put this together from lots of sources, to be blunt *it works*, however it is probably not pretty, could be improved and may yet have some errors.
 
 * Flask socketio
 
-Every tutorial I've found covers chat programs, well this was all new ground for me and a little out of my league but eventually i cooked up something that worked. The flask-socketio docs are good and they can be found here; https://flask-socketio.readthedocs.io/en/latest/ my problem was not the pythonic side but the client level that really screwed with my head anyway, setting up flask for socketio is as simple as any other library eg ~sudo pip install flask-socketio~ and ~sudo pip install eventlet~ then its a relatively simple task of following the instructions on the website.
+Every tutorial I've found covers chat programs but that was not what i wanted and I did not see how to translate the chat app into what i needed. To be fair the flask-socketio docs are good and they can be found here; https://flask-socketio.readthedocs.io/en/latest/ but my problem was not the pythonic side but the client side, setting up flask for socketio is as simple as any other library eg ~sudo pip install flask-socketio~ and ~sudo pip install eventlet~ then its a relatively simple task of following the instructions on the website.
 
 Below are parts of my sample code;
 
 ** Setting up the socketio 
 #+BEGIN_SRC python -n
-
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app, async_mode=async_mode)
 thread = None
-
 #+END_SRC
-
 
 ** background thread
 
 This essentially sends the random values which move the gauges, normally you'd replace the random function with whatever data you want to send.
 
 #+BEGIN_SRC python -n
-
   def background_thread():
       """Example of how to send server generated events to clients."""
       ext=fr=kt=bd=elec=0
@@ -65,7 +62,6 @@ This essentially sends the random values which move the gauges, normally you'd r
 	  socketio.emit('my_response',
 			{'data':'Values', 'elec': elec,'ext': ext,'fr': fr,'kt': kt,'bd': bd},
 			namespace='/carpi')
-
 #+END_SRC
 
 So you can see i'm sending four random temperature values and one electricity output, they are sent to the client via the socketio.emit line.
@@ -93,8 +89,10 @@ So you can see i'm sending four random temperature values and one electricity ou
 
 #+END_SRC
 
+The above is the main part of the simple flask app as you can see we define the normal routes but render the template with an additional "switch" (async_mode), and start the background thread that calls the random number generator.
+
 * the client
-The client is simply an HTML page which loads the relevant libraries for displaying the gauges, working with socketio and jquery. If you've download the git and run it you should see a page resembling;
+The client is simply an HTML page which loads the relevant libraries for displaying the gauges, working with socketio and jquery. If you've downloaded my git files and run it you should see a page resembling;
 
 
 [[file:imgs_socketio/2017-05-19%2018_09_21-LEE%20Gauge%20Test.png]]
@@ -193,4 +191,5 @@ the second controls all the parameters that design the gauge.
     </script>
 #+END_SRC
 
-And that is pretty much it, start the app, open a web-browser and point at 127.0.0.1:5000 and voila.... the next part of my journey is re-writing the "dragelec" app to use websockets etc and then changing the client to cope. Thats the easy part.........
+And that is pretty much it, start the app, open a web-browser and point at 127.0.0.1:5000 and voila.... You should have some reasonable looking gauges that update automatically, for me the next part is re-writing the "dragelec" app to use websockets etc and then changing the client to cope. Thats the easy part, now go tweak :)
+
