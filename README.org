@@ -9,6 +9,37 @@
 #+SETUPFILE: theme-readtheorg-local.setup
 #+DATE: 2017-04-03T21:17:39+01:00
 
+* UPDATE 2021.06.20
+Flask etc has undergone some major changes since i wrote this, in order to get the below to work you need to ensure you have the earlier libraries so check what 
+
+#+BEGIN_SRC bash
+pip show flask-socketio
+#+END_SRC
+
+shows when i did this it showed me
+
+#+BEGIN_SRC
+PS D:\Documents\dumpground\gauges_flask_socketio-master> pip show flask-socketio
+Name: Flask-SocketIO
+Version: 5.1.0
+Summary: Socket.IO integration for Flask applications
+Home-page: http://github.com/miguelgrinberg/Flask-SocketIO/
+Author: Miguel Grinberg
+Author-email: miguelgrinberg50@gmail.com
+License: MIT
+Location: d:\software\python38-32\lib\site-packages
+Requires: Flask, python-socketio
+Required-by:
+#+END_SRC
+
+To get the gauges working you need to run the following to downgrade the updated versions;
+
+#+BEGIN_SRC bash
+pip install --upgrade python-engineio==3.13.2
+pip install --upgrade python-socketio==4.6.0
+pip install --upgrade flask-socketio==4.3.1
+#+END_SRC
+
 * Intro
 
 I've been running a home Pi based server that monitors electricity & internal/external temperatures, for a longtime it was dumb ie i could view the data when i would ssh in or on graphs via a remote service but apart from email alerts for long term high electricity usage it was to all intents lacking.
